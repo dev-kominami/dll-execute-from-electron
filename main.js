@@ -9,6 +9,7 @@ const library_file = "./dll/Dll1.dll"; //dllファイル
 const dll = ffi.Library(library_file, {
   register_callback: ["void", ["pointer"]], //callbackの場合の定義
   test_print: ["void", ["string"]],
+  test_add_int: ["int", ["int", "int"]],
 });
 
 const callback = ffi.Callback("void", ["string"], function(callback) {
@@ -43,6 +44,11 @@ function createWindow () {
 
   ipcMain.handle('test_print', async (_e, _arg) => {
     dll.test_print("test print!!")
+  });
+
+  ipcMain.handle('test_add_int', async (_e, arg) => {
+    const res = dll.test_add_int(arg.a, arg.b)
+    return res;
   });
   /************************************************** */
 
