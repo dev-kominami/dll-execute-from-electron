@@ -1,5 +1,20 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
+
+/**
+ * dll実行の準備
+ */
+const ffi = require('ffi-napi')
+const library_file = "./dll/Dll1.dll"; //dllファイル
+const dll = ffi.Library(library_file, {
+  register_callback: ["void", ["pointer"]], //callbackの場合の定義
+  test_print: ["string", ["string"]],
+});
+
+const callback = ffi.Callback("void", ["string"], function(callback) {
+  console.log("callback value:", callback)
+});
+/******************************************** */
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -7,9 +22,30 @@ function createWindow () {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      devTools: true
+      nodeIntegration: false,
+      enableRemoteModule: true,
+      contextIsolation: true,
+      devTools: true,
+      sandbox: true
     }
-  })
+  });
+
+  /**
+   * mainプロセスでddlを実行するためのhandlerを定義
+   */
+  ipcMain.handle('register_callback', async (_e, _arg) => {
+    const res = dll.register_callback(callback)
+    process.on('exit', function() {
+      callback
+    });
+    return res;
+  });
+
+  // TODO: 実行するとelectronが落ちる
+  ipcMain.handle('test_print', async (_e, _arg) => {
+    dll.test_print("test print!!")
+  });
+  /************************************************** */
 
   win.loadFile('index.html')
 }

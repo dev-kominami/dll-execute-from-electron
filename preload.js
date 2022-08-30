@@ -1,10 +1,9 @@
-window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector)
-    if (element) element.innerText = text
-  }
+const electron = require("electron")
 
-  for (const type of ['chrome', 'node', 'electron']) {
-    replaceText(`${type}-version`, process.versions[type])
+electron.contextBridge.exposeInMainWorld(
+  // window.requires.xxxでレンダープロセスからアクセスできるようにする
+  "requires", {
+    register_callback: async () => electron.ipcRenderer.invoke("register_callback"),
+    test_print: async () => electron.ipcRenderer.invoke("test_print")
   }
-})
+);
