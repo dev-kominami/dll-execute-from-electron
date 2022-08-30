@@ -8,7 +8,7 @@ const ffi = require('ffi-napi')
 const library_file = "./dll/Dll1.dll"; //dllファイル
 const dll = ffi.Library(library_file, {
   register_callback: ["void", ["pointer"]], //callbackの場合の定義
-  test_print: ["string", ["string"]],
+  test_print: ["void", ["string"]],
 });
 
 const callback = ffi.Callback("void", ["string"], function(callback) {
@@ -41,7 +41,6 @@ function createWindow () {
     return res;
   });
 
-  // TODO: 実行するとelectronが落ちる
   ipcMain.handle('test_print', async (_e, _arg) => {
     dll.test_print("test print!!")
   });
