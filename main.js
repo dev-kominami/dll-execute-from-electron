@@ -1,22 +1,14 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
+const utils = require('./util')
 
 /**
  * dll実行の準備
  */
 const ffi = require('ffi-napi')
 
-let library_file;
-console.log('platform is', process.platform);
-
 //change library file by platform
-if (process.platform === 'darwin') {
-  library_file = "./dylib/demo.dylib"; //dylibファイル
-}
-
-if (process.platform === 'win32') {
-  library_file = "./dll/Dll1.dll"; //dllファイル
-}
+const library_file = new utils().libraryFilePath();
 
 const dll = ffi.Library(library_file, {
   register_callback: ["void", ["pointer"]], //callbackの場合の定義
