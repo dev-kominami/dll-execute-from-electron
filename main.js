@@ -5,7 +5,10 @@ const path = require('path')
  * dll実行の準備
  */
 const ffi = require('ffi-napi')
-const library_file = "./dll/Dll1.dll"; //dllファイル
+//TODO: osによって読み込むファイルを切り替える
+// const library_file = "./dll/Dll1.dll"; //dllファイル
+const library_file = "./dylib/demo.dylib"; //dylibファイル
+
 const dll = ffi.Library(library_file, {
   register_callback: ["void", ["pointer"]], //callbackの場合の定義
   test_print: ["void", ["string"]],
