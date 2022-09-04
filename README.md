@@ -3,8 +3,16 @@
 ## environment
 
 - windows11
+- macOS
 - node varsion: v16.17.0
 - Python 3.10.6 (Required for build when installing ffi-napi)
+
+
+### environment building
+
+```
+npm install
+```
 
 ## execution method
 
